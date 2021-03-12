@@ -1,8 +1,8 @@
 <?php namespace AamDsam\Bpjs\PCare;
 
-use AamDsam\Bpjs\BpjsService;
+use AamDsam\Bpjs\PCare\PcareService;
 
-class Peserta extends BpjsService
+class Peserta extends PcareService
 {
     /**
      * @var string

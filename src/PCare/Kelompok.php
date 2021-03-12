@@ -1,8 +1,8 @@
 <?php namespace AamDsam\Bpjs\PCare;
 
-use AamDsam\Bpjs\BpjsService;
+use AamDsam\Bpjs\PCare\PcareService;
 
-class Kelompok extends BpjsService
+class Kelompok extends PcareService
 {
     /**
      * @var string
