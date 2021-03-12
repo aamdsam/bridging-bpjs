@@ -104,7 +104,7 @@ class BpjsService{
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -125,7 +125,7 @@ class BpjsService{
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -143,7 +143,7 @@ class BpjsService{
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -162,7 +162,7 @@ class BpjsService{
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
