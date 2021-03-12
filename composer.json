@@ -1,0 +1,21 @@
+{
+    "name": "aamdsam/bridging-bpjs",
+    "description": "Package untuk bridging bpjs vclaim, apcare dan pcare",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Muhammad Muammar",
+            "email": "muh.muammar@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "AamDsam\\Bpjs\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": ">=6.0"
+    }
+}
