@@ -82,9 +82,6 @@ class PcareService
             'verify' => false
         ]);
 
-        // merge configs
-        $configurations = config('bpjs') + $configurations;
-
         foreach ($configurations as $key => $val){
             if (property_exists($this, $key)) {
                 $this->$key = $val;
@@ -216,7 +213,7 @@ class PcareService
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -238,7 +235,7 @@ class PcareService
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -257,7 +254,7 @@ class PcareService
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -282,7 +279,7 @@ class PcareService
                 ]
             )->getBody()->getContents();
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+            $response = $e->getMessage();
         }
         return $response;
     }
