@@ -1,4 +1,4 @@
-# BPJS Bridging Vclaim
+# BPJS Bridging Vclaim, APlicare & Pcare
 
 Bridging VClaim
 
@@ -65,6 +65,7 @@ function pcare_conf(){
     ];
     return $config;
 }
+
 //diagnosa
 $bpjs = new PCare\Diagnosa($this->pcare_conf());
 return $bpjs->keyword('001')->index(0, 2);
