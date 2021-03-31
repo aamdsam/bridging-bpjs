@@ -70,93 +70,106 @@ $bpjs = new PCare\Diagnosa($this->pcare_conf());
 return $bpjs->keyword('001')->index(0, 2);
 
 // dokter
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Dokter($this->pcare_conf());
 return $bpjs->index($start, $limit);
 
 // kesadaran
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Kesadaran($this->pcare_conf());
 return $bpjs->index();
 
 // kunjungan rujukan
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Kunjungan($this->pcare_conf());
 return $bpjs->rujukan($nomorKunjungan)->index();
 // kunjungan riwayat
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+
+$bpjs = new PCare\Kunjungan($this->pcare_conf());
 return $bpjs->riwayat($nomorKartu)->index();
 
 // mcu
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Mcu($this->pcare_conf());
 return $bpjs->kunjungan($nomorKunjungan)->index();
 
 // obat dpho
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Obat($this->pcare_conf());
 return $bpjs->dpho($keyword)->index($start, $limit);
+
 // obat kunjungan
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Obat($this->pcare_conf());
 return $bpjs->kunjungan($nomorKunjungan)->index();
 
 // pendaftaran tanggal daftar
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Pendaftaran($this->pcare_conf());
 return $bpjs->tanggalDaftar($tglDaftar)->index($start, $limit);
+
 // pendaftaran nomor urut
 $bpjs = new PCare\Diagnosa($this->pcare_conf());
 return $bpjs->nomorUrut($nomorUrut)->tanggalDaftar($tanggalDaftar)->index();
 
 // peserta
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Peserta($this->pcare_conf());
 return $bpjs->keyword($keyword)->show();
+
 // peserta jenis kartu [NIK/NOKA]
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Peserta($this->pcare_conf());
 return $bpjs->jenisKartu($jenisKartu)->keyword($keyword)->show();
 
 // poli
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Poli($this->pcare_conf());
 return $bpjs->fktp()->index($start, $limit);
 
 // provider
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\provider($this->pcare_conf());
 return $bpjs->index($start, $limit);
 
 // tindakan kode tkp
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Tindakan($this->pcare_conf());
 return $bpjs->kodeTkp($keyword)->index($start, $limit);
+
 // tindakan kunjungan
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Tindakan($this->pcare_conf());
 return $bpjs->kunjungan($nomorKunjungan)->index();
 
 // kelompok club
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Kelompok($this->pcare_conf());
 return $bpjs->club($kodeJenisKelompok)->index();
+
 // kelompok kegiatan
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Kelompok($this->pcare_conf());
 return $bpjs->kegiatan($bulan)->index();
+
 // kelompok peserta
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Kelompok($this->pcare_conf());
 return $bpjs->peserta($eduId)->index();
 
 // spesialis
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->index();
+
 // spesialis sub spesialis
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->keyword($keyword)->subSpesialis()->index();
+
 // spesialis sarana
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->sarana()->index();
+
 // spesialis khusus
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->khusus()->index();
+
 // spesialis rujuk
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->rujuk()->subSpesialis($kodeSubSpesialis)->sarana($kodeSarana)->tanggalRujuk($tanggalRujuk)->index();
+
 // spesialis rujuk
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->rujuk()->khusus($kodeKhusus)->nomorKartu($nomorKartu)->tanggalRujuk($tanggalRujuk)->index();
+
 // spesialis rujuk
-$bpjs = new PCare\Diagnosa($this->pcare_conf());
+$bpjs = new PCare\Spesialis($this->pcare_conf());
 return $bpjs->rujuk()->khusus($kodeKhusus)->subSpesialis($kodeSubSpesialis)->nomorKartu($nomorKartu)->tanggalRujuk($tanggalRujuk)->index();
 ```
 
-Katalog BPJS:   
-- https://dvlp.bpjs-kesehatan.go.id/VClaim
-- https://new-api.bpjs-kesehatan.go.id/pcare-rest-v3.0
+Katalog BPJS:
+- Vclaim V1.1: https://dvlp.bpjs-kesehatan.go.id/VClaim-Katalog
+- Pcare V3: https://new-api.bpjs-kesehatan.go.id/pcare-rest-v3.0
