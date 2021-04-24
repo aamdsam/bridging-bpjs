@@ -79,10 +79,10 @@ class PcareService
     public function __construct($configurations = [])
     {
         $this->clients = new Client([
-            'verify' => false
+            'verify' => false,
         ]);
 
-        foreach ($configurations as $key => $val){
+        foreach ($configurations as $key => $val) {
             if (property_exists($this, $key)) {
                 $this->$key = $val;
             }
@@ -125,7 +125,7 @@ class PcareService
     public function store($data = [])
     {
         $response = $this->post($this->feature, $data);
-        return json_decode($response, true);
+        return $this->decodeResponse($response);
     }
 
     public function update($data = [])
@@ -143,9 +143,9 @@ class PcareService
     protected function setHeaders()
     {
         $this->headers = [
-            'X-cons-id'       => $this->cons_id,
-            'X-Timestamp'     => $this->timestamp,
-            'X-Signature'     => $this->signature,
+            'X-cons-id' => $this->cons_id,
+            'X-Timestamp' => $this->timestamp,
+            'X-Signature' => $this->signature,
             'X-Authorization' => $this->authorization,
         ];
         return $this;
@@ -209,11 +209,11 @@ class PcareService
                 'GET',
                 "{$this->base_url}/{$this->service_name}/{$feature}{$params}",
                 [
-                    'headers' => $this->headers
+                    'headers' => $this->headers,
                 ]
             )->getBody()->getContents();
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
+        } catch (\Exception$e) {
+            $response = $e->getResponse()->getBody()->getContents();
         }
         return $response;
     }
@@ -222,7 +222,7 @@ class PcareService
     {
         $this->headers['Content-Type'] = 'application/json';
         $this->headers['Accept'] = 'application/json';
-        if (!empty($headers)){
+        if (!empty($headers)) {
             $this->headers = array_merge($this->headers, $headers);
         }
         try {
@@ -231,11 +231,11 @@ class PcareService
                 "{$this->base_url}/{$this->service_name}/{$feature}",
                 [
                     'headers' => $this->headers,
-                    'body'    => json_encode($data),
+                    'body' => json_encode($data),
                 ]
             )->getBody()->getContents();
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
+        } catch (\Exception$e) {
+            $response = $e->getResponse()->getBody()->getContents();
         }
         return $response;
     }
@@ -250,11 +250,11 @@ class PcareService
                 "{$this->base_url}/{$this->service_name}/{$feature}",
                 [
                     'headers' => $this->headers,
-                    'body'    => json_encode($data),
+                    'body' => json_encode($data),
                 ]
             )->getBody()->getContents();
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
+        } catch (\Exception$e) {
+            $response = $e->getResponse()->getBody()->getContents();
         }
         return $response;
     }
@@ -278,8 +278,8 @@ class PcareService
                     'headers' => $this->headers,
                 ]
             )->getBody()->getContents();
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
+        } catch (\Exception$e) {
+            $response = $e->getResponse()->getBody()->getContents();
         }
         return $response;
     }
@@ -295,5 +295,13 @@ class PcareService
             }
         }
         return $params;
+    }
+
+    private function decodeResponse($response)
+    {
+        $curlyStart = strpos($response, '{');
+
+        $response = substr($response, $curlyStart);
+        return json_decode($response, true);
     }
 }
