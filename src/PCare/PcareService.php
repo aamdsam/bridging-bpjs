@@ -137,7 +137,7 @@ class PcareService
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
-        return json_decode($response, true);
+        return $this->decodeResponse($response);
     }
 
     protected function setHeaders()
@@ -153,8 +153,11 @@ class PcareService
 
     protected function setTimestamp()
     {
-        date_default_timezone_set('UTC');
-        $this->timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+        // date_default_timezone_set('UTC');
+        // $this->timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+
+        $date = new \DateTime();
+        $this->timestamp = $date->format("U");
         return $this;
     }
 
@@ -185,17 +188,17 @@ class PcareService
         $this->headers[$key] = $value;
     }
 
-    protected function getHeaders()
+    public function getHeaders()
     {
         return $this->headers;
     }
 
-    protected function getBaseUrl()
+    public function getBaseUrl()
     {
         return $this->base_url;
     }
 
-    protected function getServiceName()
+    public function getServiceName()
     {
         return $this->service_name;
     }
@@ -299,9 +302,8 @@ class PcareService
 
     private function decodeResponse($response)
     {
-        $curlyStart = strpos($response, '{');
-
-        $response = substr($response, $curlyStart);
-        return json_decode($response, true);
+        $decode = json_decode($response,true);
+        $result =  is_array($decode) ? $decode : $response;
+        return $result;
     }
 }
