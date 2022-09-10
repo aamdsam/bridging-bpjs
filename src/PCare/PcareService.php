@@ -108,6 +108,14 @@ class PcareService
         return $this;
     }
 
+    public function responseDecoded($response)
+    {
+        $response = json_decode($response, true);
+        $response["response"] = $this->stringDecrypt($response["response"]);
+        $response["response"] = json_decode($response["response"], true);
+        return $response;
+    }
+
     public function index($start = null, $limit = null)
     {
         $feature = $this->feature;
@@ -117,10 +125,7 @@ class PcareService
             $response = $this->get("{$feature}");
         }
 
-        $response = json_decode($response, true);
-        $response["response"] = $this->stringDecrypt($response["response"]);
-        $response["response"] = json_decode($response["response"], true);
-        return $response;
+        return $this->responseDecoded($response);
     }
 
     public function show($keyword = null, $start = null, $limit = null)
@@ -133,25 +138,25 @@ class PcareService
         } else {
             $response = $this->get("{$feature}");
         }
-        return json_decode($response, true);
+        return $this->responseDecoded($response);
     }
 
     public function store($data = [])
     {
         $response = $this->post($this->feature, $data);
-        return json_decode($response, true);
+        return $this->responseDecoded($response);
     }
 
     public function update($data = [])
     {
         $response = $this->put($this->feature, $data);
-        return json_decode($response, true);
+        return $this->responseDecoded($response);
     }
 
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
-        return json_decode($response, true);
+        return $this->responseDecoded($response);
     }
 
     protected function setHeaders()
