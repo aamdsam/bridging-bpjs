@@ -74,15 +74,25 @@ class PcareService
     /**
      * @var string
      */
+    private $user_key;
+
+    /**
+     * @var string
+     */
     protected $feature;
+
+    /**
+     * @var string
+     */
+    protected $key_decrypt;
 
     public function __construct($configurations = [])
     {
         $this->clients = new Client([
-            'verify' => false,
+            'verify' => false
         ]);
 
-        foreach ($configurations as $key => $val) {
+        foreach ($configurations as $key => $val){
             if (property_exists($this, $key)) {
                 $this->$key = $val;
             }
@@ -106,7 +116,11 @@ class PcareService
         } else {
             $response = $this->get("{$feature}");
         }
-        return json_decode($response, true);
+
+        $response = json_decode($response, true);
+        $response["response"] = $this->stringDecrypt($response["response"]);
+        $response["response"] = json_decode($response["response"], true);
+        return $response;
     }
 
     public function show($keyword = null, $start = null, $limit = null)
@@ -125,7 +139,7 @@ class PcareService
     public function store($data = [])
     {
         $response = $this->post($this->feature, $data);
-        return $this->decodeResponse($response);
+        return json_decode($response, true);
     }
 
     public function update($data = [])
@@ -137,27 +151,26 @@ class PcareService
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
-        return $this->decodeResponse($response);
+        return json_decode($response, true);
     }
 
     protected function setHeaders()
     {
         $this->headers = [
-            'X-cons-id' => $this->cons_id,
-            'X-Timestamp' => $this->timestamp,
-            'X-Signature' => $this->signature,
+            'X-cons-id'       => $this->cons_id,
+            'X-Timestamp'     => $this->timestamp,
+            'X-Signature'     => $this->signature,
             'X-Authorization' => $this->authorization,
+            'user_key' => $this->user_key,
         ];
+
         return $this;
     }
 
     protected function setTimestamp()
     {
-        // date_default_timezone_set('UTC');
-        // $this->timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
-
-        $date = new \DateTime();
-        $this->timestamp = $date->format("U");
+        date_default_timezone_set('UTC');
+        $this->timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
         return $this;
     }
 
@@ -166,6 +179,7 @@ class PcareService
         $data = "{$this->cons_id}&{$this->timestamp}";
         $signature = hash_hmac('sha256', $data, $this->secret_key, true);
         $encodedSignature = base64_encode($signature);
+        $this->key_decrypt = "$this->cons_id$this->secret_key$this->timestamp";
         $this->signature = $encodedSignature;
         return $this;
     }
@@ -188,19 +202,28 @@ class PcareService
         $this->headers[$key] = $value;
     }
 
-    public function getHeaders()
+    protected function getHeaders()
     {
         return $this->headers;
     }
 
-    public function getBaseUrl()
+    protected function getBaseUrl()
     {
         return $this->base_url;
     }
 
-    public function getServiceName()
+    protected function getServiceName()
     {
         return $this->service_name;
+    }
+
+    function stringDecrypt($string){      
+        $encrypt_method = 'AES-256-CBC';
+        $key_hash = hex2bin(hash('sha256', $this->key_decrypt));
+        $iv = substr(hex2bin(hash('sha256', $this->key_decrypt)), 0, 16);
+        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+    
+        return \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
     }
 
     protected function get($feature, $parameters = [])
@@ -212,12 +235,13 @@ class PcareService
                 'GET',
                 "{$this->base_url}/{$this->service_name}/{$feature}{$params}",
                 [
-                    'headers' => $this->headers,
+                    'headers' => $this->headers
                 ]
             )->getBody()->getContents();
-        } catch (\Exception$e) {
-            $response = $e->getResponse()->getBody()->getContents();
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
         }
+
         return $response;
     }
 
@@ -225,7 +249,7 @@ class PcareService
     {
         $this->headers['Content-Type'] = 'application/json';
         $this->headers['Accept'] = 'application/json';
-        if (!empty($headers)) {
+        if (!empty($headers)){
             $this->headers = array_merge($this->headers, $headers);
         }
         try {
@@ -234,11 +258,11 @@ class PcareService
                 "{$this->base_url}/{$this->service_name}/{$feature}",
                 [
                     'headers' => $this->headers,
-                    'body' => json_encode($data),
+                    'body'    => json_encode($data),
                 ]
             )->getBody()->getContents();
-        } catch (\Exception$e) {
-            $response = $e->getResponse()->getBody()->getContents();
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -253,11 +277,11 @@ class PcareService
                 "{$this->base_url}/{$this->service_name}/{$feature}",
                 [
                     'headers' => $this->headers,
-                    'body' => json_encode($data),
+                    'body'    => json_encode($data),
                 ]
             )->getBody()->getContents();
-        } catch (\Exception$e) {
-            $response = $e->getResponse()->getBody()->getContents();
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -281,8 +305,8 @@ class PcareService
                     'headers' => $this->headers,
                 ]
             )->getBody()->getContents();
-        } catch (\Exception$e) {
-            $response = $e->getResponse()->getBody()->getContents();
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
         }
         return $response;
     }
@@ -298,12 +322,5 @@ class PcareService
             }
         }
         return $params;
-    }
-
-    private function decodeResponse($response)
-    {
-        $decode = json_decode($response,true);
-        $result =  is_array($decode) ? $decode : $response;
-        return $result;
     }
 }
