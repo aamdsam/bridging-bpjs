@@ -84,7 +84,7 @@ class PcareService
     /**
      * @var string
      */
-    protected $key_decrypt;
+    public $key_decrypt;
 
     public function __construct($configurations = [])
     {
@@ -207,17 +207,17 @@ class PcareService
         $this->headers[$key] = $value;
     }
 
-    protected function getHeaders()
+    public function getHeaders()
     {
         return $this->headers;
     }
 
-    protected function getBaseUrl()
+    public function getBaseUrl()
     {
         return $this->base_url;
     }
 
-    protected function getServiceName()
+    public function getServiceName()
     {
         return $this->service_name;
     }
