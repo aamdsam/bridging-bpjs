@@ -252,8 +252,10 @@ class PcareService
 
     protected function post($feature, $data = [], $headers = [])
     {
-        $this->headers['Content-Type'] = 'application/json';
+        // $this->headers['Content-Type'] = 'application/json';
+        $this->headers['Content-Type'] = 'text/plain';
         $this->headers['Accept'] = 'application/json';
+
         if (!empty($headers)){
             $this->headers = array_merge($this->headers, $headers);
         }
@@ -274,7 +276,8 @@ class PcareService
 
     protected function put($feature, $data = [])
     {
-        $this->headers['Content-Type'] = 'application/json';
+        // $this->headers['Content-Type'] = 'application/json';
+        $this->headers['Content-Type'] = 'text/plain';
         $this->headers['Accept'] = 'application/json';
         try {
             $response = $this->clients->request(
