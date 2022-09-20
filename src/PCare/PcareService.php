@@ -111,8 +111,10 @@ class PcareService
     public function responseDecoded($response)
     {
         $response = json_decode($response, true);
-        $response["response"] = $this->stringDecrypt($response["response"]);
-        $response["response"] = json_decode($response["response"], true);
+        if (isset($response["response"])){
+            $response["response"] = $this->stringDecrypt($response["response"]);
+            $response["response"] = json_decode($response["response"], true);
+        }
         return $response;
     }
 
@@ -156,7 +158,7 @@ class PcareService
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
-        return $this->responseDecoded($response);
+        return $response;
     }
 
     protected function setHeaders()
