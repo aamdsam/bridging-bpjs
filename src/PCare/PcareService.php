@@ -110,8 +110,7 @@ class PcareService
 
     public function responseDecoded($response)
     {
-        $response = json_decode($response, true);
-        if (isset($response["response"])){
+        if (isset($response["response"])) {
             $response["response"] = $this->stringDecrypt($response["response"]);
             $response["response"] = json_decode($response["response"], true);
         }
@@ -144,20 +143,32 @@ class PcareService
     }
 
     public function store($data = [])
-    {
+    {                               
         $response = $this->post($this->feature, $data);
-        return $this->responseDecoded($response);
+        if (is_array($response)){
+            return $this->responseDecoded($response);
+        }
+
+        return $response;
     }
 
     public function update($data = [])
     {
         $response = $this->put($this->feature, $data);
-        return $this->responseDecoded($response);
+        if (is_array($response)) {
+            return $this->responseDecoded($response);
+        }
+
+        return $response;
     }
 
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
+        if (is_array($response)) {
+            return $this->responseDecoded($response);
+        }
+
         return $response;
     }
 
@@ -255,8 +266,8 @@ class PcareService
     protected function post($feature, $data = [], $headers = [])
     {
         // $this->headers['Content-Type'] = 'application/json';
-        $this->headers['Content-Type'] = 'text/plain';
         $this->headers['Accept'] = 'application/json';
+        $this->headers['Content-Type'] = 'text/plain';
 
         if (!empty($headers)){
             $this->headers = array_merge($this->headers, $headers);
