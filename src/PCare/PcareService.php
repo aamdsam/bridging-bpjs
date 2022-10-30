@@ -1,4 +1,5 @@
 <?php
+
 namespace AamDsam\Bpjs\PCare;
 
 use GuzzleHttp\Client;
@@ -92,7 +93,7 @@ class PcareService
             'verify' => false
         ]);
 
-        foreach ($configurations as $key => $val){
+        foreach ($configurations as $key => $val) {
             if (property_exists($this, $key)) {
                 $this->$key = $val;
             }
@@ -110,11 +111,33 @@ class PcareService
 
     public function responseDecoded($response)
     {
-        if (isset($response["response"])) {
-            $response["response"] = $this->stringDecrypt($response["response"]);
-            $response["response"] = json_decode($response["response"], true);
+        // ubah ke array
+        $responseArray = json_decode($response, true);
+        if (!is_array($responseArray)) {
+            return [
+                "metaData" => [
+                    "message" => $responseArray,
+                    "code" => 201
+                ]
+            ];
         }
-        return $response;
+
+        if (!isset($responseArray["response"])) {
+            return $responseArray;
+        }
+
+
+        $responseDecrypt = $this->stringDecrypt($responseArray["response"]);
+        $responseArrayDecrypt = json_decode($responseDecrypt, true);
+
+        // apabila bukan array
+        if (!is_array($responseArrayDecrypt) || $responseDecrypt == '') {
+            return $responseArray;
+        }
+
+        $responseArray["response"] = $responseArrayDecrypt;
+
+        return $responseArray;
     }
 
     public function index($start = null, $limit = null)
@@ -143,33 +166,21 @@ class PcareService
     }
 
     public function store($data = [])
-    {                               
+    {
         $response = $this->post($this->feature, $data);
-        if (is_array($response)){
-            return $this->responseDecoded($response);
-        }
-
-        return $response;
+        return $this->responseDecoded($response);
     }
 
     public function update($data = [])
     {
         $response = $this->put($this->feature, $data);
-        if (is_array($response)) {
-            return $this->responseDecoded($response);
-        }
-
-        return $response;
+        return $this->responseDecoded($response);
     }
 
     public function destroy($keyword = null, $parameters = [])
     {
         $response = $this->delete($this->feature, $keyword, $parameters);
-        if (is_array($response)) {
-            return $this->responseDecoded($response);
-        }
-
-        return $response;
+        return $this->responseDecoded($response);
     }
 
     protected function setHeaders()
@@ -235,12 +246,13 @@ class PcareService
         return $this->service_name;
     }
 
-    function stringDecrypt($string){      
+    function stringDecrypt($string)
+    {
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $this->key_decrypt));
         $iv = substr(hex2bin(hash('sha256', $this->key_decrypt)), 0, 16);
         $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-    
+
         return \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
     }
 
@@ -269,7 +281,7 @@ class PcareService
         $this->headers['Accept'] = 'application/json';
         $this->headers['Content-Type'] = 'text/plain';
 
-        if (!empty($headers)){
+        if (!empty($headers)) {
             $this->headers = array_merge($this->headers, $headers);
         }
         try {
