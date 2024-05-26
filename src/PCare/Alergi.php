@@ -7,5 +7,5 @@ class Alergi extends PcareService
     /**
      * @var string
      */
-    protected $feature = 'alergi';
+    protected $feature = 'alergi/jenis';
 }
