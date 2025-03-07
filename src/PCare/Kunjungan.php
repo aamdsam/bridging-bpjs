@@ -7,7 +7,7 @@ class Kunjungan extends PcareService
     /**
      * @var string
      */
-    protected $feature = 'kunjungan';
+    protected $feature = 'kunjungan/v1';
 
     public function rujukan($nomorKunjungan)
     {

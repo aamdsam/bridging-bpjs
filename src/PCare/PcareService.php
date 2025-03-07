@@ -112,6 +112,7 @@ class PcareService
     {
         // ubah ke array
         $responseArray = json_decode($response, true);
+        // dd($response);
         if (!is_array($responseArray)) {
             return [
                 "metaData" => [
@@ -121,10 +122,9 @@ class PcareService
             ];
         }
 
-        if (!isset($responseArray["response"])) {
+        if (!isset($responseArray["response"]) || $responseArray["response"] == []) {
             return $responseArray;
         }
-
         
         $responseDecrypt = $this->stringDecrypt($responseArray["response"]);
         $responseArrayDecrypt = json_decode($responseDecrypt, true);
@@ -147,7 +147,7 @@ class PcareService
         } else {
             $response = $this->get("{$feature}");
         }
-
+        // dd($response);
         return $this->responseDecoded($response);
     }
 
@@ -165,8 +165,9 @@ class PcareService
     }
 
     public function store($data = [])
-    {                               
+    {                           
         $response = $this->post($this->feature, $data);
+        // dd($response);
         return $this->responseDecoded($response);
     }
 
@@ -247,7 +248,7 @@ class PcareService
         return $this->service_name;
     }
 
-    function stringDecrypt($string){      
+    function stringDecrypt($string){
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $this->key_decrypt));
         $iv = substr(hex2bin(hash('sha256', $this->key_decrypt)), 0, 16);
@@ -260,6 +261,7 @@ class PcareService
     {
         $params = $this->getParams($parameters);
         $this->headers['Content-Type'] = 'application/json; charset=utf-8';
+        // $this->headers['Content-Type'] = 'text/plain';
         try {
             $response = $this->clients->request(
                 'GET',
@@ -304,6 +306,7 @@ class PcareService
         // $this->headers['Content-Type'] = 'application/json';
         $this->headers['Content-Type'] = 'text/plain';
         $this->headers['Accept'] = 'application/json';
+        // dd("{$this->base_url}/{$this->service_name}/{$feature}");
         try {
             $response = $this->clients->request(
                 'PUT',
